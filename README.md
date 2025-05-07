@@ -44,8 +44,7 @@ python -m venv venv
 venv\Scripts\activate
 
 # Install dependencies
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-pip install matplotlib numpy Pillow tqdm pandas scikit-learn seaborn streamlit opencv-python
+pip install -r requirements.txt
 ```
 </details>
 
@@ -60,8 +59,7 @@ python -m venv venv
 source venv/bin/activate
 
 # Install dependencies
-pip install torch torchvision torchaudio
-pip install matplotlib numpy Pillow tqdm pandas scikit-learn seaborn streamlit opencv-python
+pip install -r requirements.txt
 ```
 </details>
 
