@@ -215,7 +215,7 @@ The project is designed for easy customization:
 - Choose between MobileNetV3 variants (small/large)
 - Adjust learning rates and optimization parameters
 - Modify data augmentation strategies
-- Fine-tune a pre-trained model by freezing the backbone
+- Fine-tune a pre-trained model by freezing the backbone ( Currently, it is trained from scratch because these images are not part of the original model's training dataset, and we had a sufficient amount of data.)
 - Change image preprocessing parameters
 
 ## 🤝 Contributing
