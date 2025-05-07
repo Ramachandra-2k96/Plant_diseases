@@ -1,0 +1,11 @@
+torch
+torchvision
+matplotlib
+tqdm
+opencv-python
+pillow
+streamlit
+pandas
+scikit-learn
+
+
