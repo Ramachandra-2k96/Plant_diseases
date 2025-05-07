@@ -208,35 +208,45 @@ def main():
     # Get transform
     transform = get_transform()
     
-    # File uploader
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"])
+    # Simple file uploader without type restrictions
+    uploaded_file = st.file_uploader("Choose an image...")
     
     if uploaded_file is not None:
-        # Display original image
-        image = Image.open(uploaded_file).convert("RGB")
-        
-        # Make prediction with GradCAM
-        results = predict_with_gradcam(model, image, transform, class_names, device)
-        
-        # Show results in two columns
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.header("Original Image")
-            st.image(image, use_container_width=True)
-            st.write(f"**Prediction:** {results['pred_class']}")
-            st.write(f"**Confidence:** {results['confidence']:.4f}")
-            st.write(f"**Inference Time:** {results['inference_time']:.2f} ms")
-            
-            # Display top 5 predictions
-            st.subheader("Top 5 Predictions")
-            for i, (class_name, prob) in enumerate(results['top5_predictions']):
-                st.write(f"{i+1}. {class_name}: {prob:.4f}")
-        
-        with col2:
-            st.header("GradCAM Visualization")
-            st.image(results['gradcam'], use_container_width=True)
-            st.write("The highlighted areas show the regions the model focused on to make its prediction.")
+        # Check if the file is a valid image type
+        if uploaded_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
+            try:
+                # Display original image
+                image = Image.open(uploaded_file).convert("RGB")
+                
+                # Make prediction with GradCAM
+                results = predict_with_gradcam(model, image, transform, class_names, device)
+                
+                # Show results in two columns
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.header("Original Image")
+                    st.image(image, use_container_width=True)
+                    st.write(f"**Prediction:** {results['pred_class']}")
+                    st.write(f"**Confidence:** {results['confidence']:.4f}")
+                    st.write(f"**Inference Time:** {results['inference_time']:.2f} ms")
+                    
+                    # Display top 5 predictions
+                    st.subheader("Top 5 Predictions")
+                    for i, (class_name, prob) in enumerate(results['top5_predictions']):
+                        st.write(f"{i+1}. {class_name}: {prob:.4f}")
+                
+                with col2:
+                    st.header("GradCAM Visualization")
+                    st.image(results['gradcam'], use_container_width=True)
+                    st.write("The highlighted areas show the regions the model focused on to make its prediction.")
+            except Exception as e:
+                st.error(f"Error processing image: {str(e)}")
+                st.info("Please make sure you've uploaded a valid image file.")
+        else:
+            st.error("Please upload an image file (jpg, jpeg, or png).")
+    else:
+        st.info("Please upload an image to get a prediction.")
 
 if __name__ == "__main__":
     main() 
