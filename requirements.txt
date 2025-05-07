@@ -7,5 +7,4 @@ pillow
 streamlit
 pandas
 scikit-learn
-
-
+seaborn

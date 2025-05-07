@@ -209,7 +209,7 @@ def main():
     transform = get_transform()
     
     # File uploader
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"])
     
     if uploaded_file is not None:
         # Display original image
