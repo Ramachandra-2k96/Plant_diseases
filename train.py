@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
+from torch.utils.data.sampler import WeightedRandomSampler
 from torchvision import transforms, models
 import torchvision.transforms.functional as TF
 from torch.amp import autocast, GradScaler
@@ -15,6 +16,7 @@ from pathlib import Path
 from PIL import Image
 import random
 import datetime
+import collections
 
 
 class PlantDataset(Dataset):
@@ -31,12 +33,15 @@ class PlantDataset(Dataset):
         self.class_to_idx = {cls_name: i for i, cls_name in enumerate(self.classes)}
         
         self.samples = []
+        self.targets = []  # Add a list to store targets for easier sampling weight calculation
         for class_name in self.classes:
             class_dir = os.path.join(self.root_dir, class_name)
             for img_name in os.listdir(class_dir):
                 if img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
                     img_path = os.path.join(class_dir, img_name)
-                    self.samples.append((img_path, self.class_to_idx[class_name]))
+                    class_idx = self.class_to_idx[class_name]
+                    self.samples.append((img_path, class_idx))
+                    self.targets.append(class_idx)
     
     def __len__(self):
         return len(self.samples)
@@ -282,7 +287,7 @@ def get_transforms(size=224):
         transforms.RandomHorizontalFlip(),
         transforms.RandomVerticalFlip(),
         transforms.RandomRotation(15),
-        transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
+        transforms.ColorJitter(brightness=0.05, contrast=0.05, saturation=0.05, hue=0.05),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -297,18 +302,41 @@ def get_transforms(size=224):
     return train_transform, val_transform
 
 
+def get_weighted_sampler(dataset):
+    """Create a weighted sampler to handle class imbalance"""
+    # Count samples per class
+    class_counts = collections.Counter(dataset.targets)
+    num_classes = len(class_counts)
+    
+    # Compute weights for each sample
+    class_weights = {class_idx: 1.0 / count for class_idx, count in class_counts.items()}
+    sample_weights = [class_weights[target] for target in dataset.targets]
+    
+    # Create WeightedRandomSampler
+    sampler = WeightedRandomSampler(
+        weights=sample_weights,
+        num_samples=len(sample_weights),
+        replacement=True
+    )
+    
+    print(f"Class distribution: {class_counts}")
+    print(f"Applied weights to balance {num_classes} classes")
+    
+    return sampler
+
+
 def main():
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description='Train a plant disease classification model')
     
     # Dataset parameters
-    parser.add_argument('--data-dir', type=str, default='./PlantVillage_Split',
+    parser.add_argument('--data-dir', type=str, default='./Data',
                         help='Path to the dataset directory')
     parser.add_argument('--img-size', type=int, default=224,
                         help='Input image size (default: 224)')
-    parser.add_argument('--batch-size', type=int, default=32,
+    parser.add_argument('--batch-size', type=int, default=64,
                         help='Batch size for training (default: 32)')
-    parser.add_argument('--num-workers', type=int, default=4,
+    parser.add_argument('--num-workers', type=int, default=8,
                         help='Number of workers for data loading (default: 4)')
     
     # Model parameters
@@ -329,10 +357,12 @@ def main():
                         help='Weight decay (default: 1e-4)')
     parser.add_argument('--mixed-precision', action='store_true', default=True,
                         help='Use mixed precision training')
-    parser.add_argument('--seed', type=int, default=42,
-                        help='Random seed (default: 42)')
+    parser.add_argument('--seed', type=int, default=108,
+                        help='Random seed (default: 108)')
     parser.add_argument('--output-dir', type=str, default='./outputs',
                         help='Path to save outputs (default: ./outputs)')
+    parser.add_argument('--weighted-sampling', action='store_true', default=True,
+                        help='Use weighted sampling to handle class imbalance')
     
     args = parser.parse_args()
     
@@ -374,13 +404,24 @@ def main():
     print(f"Class names: {class_names}")
     
     # Create data loaders
-    train_loader = DataLoader(
-        train_dataset, 
-        batch_size=args.batch_size,
-        shuffle=True,
-        num_workers=args.num_workers,
-        pin_memory=True
-    )
+    if args.weighted_sampling:
+        # Use weighted sampling for training
+        train_sampler = get_weighted_sampler(train_dataset)
+        train_loader = DataLoader(
+            train_dataset, 
+            batch_size=args.batch_size,
+            sampler=train_sampler,  # Use our weighted sampler
+            num_workers=args.num_workers,
+            pin_memory=True
+        )
+    else:
+        train_loader = DataLoader(
+            train_dataset, 
+            batch_size=args.batch_size,
+            shuffle=True,
+            num_workers=args.num_workers,
+            pin_memory=True
+        )
     
     val_loader = DataLoader(
         val_dataset, 

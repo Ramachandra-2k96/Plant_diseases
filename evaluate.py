@@ -138,7 +138,7 @@ def save_to_excel(results, class_names, output_path):
 def main():
     parser = argparse.ArgumentParser(description='Evaluate plant disease classification model on test set')
     
-    parser.add_argument('--data-dir', type=str, default='./PlantVillage_Split/test',
+    parser.add_argument('--data-dir', type=str, default='./Data/test',
                         help='Path to test data directory')
     parser.add_argument('--model-path', type=str, default='./outputs/best_model.pth',
                         help='Path to the trained model file')

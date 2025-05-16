@@ -12,7 +12,7 @@
 
 ## 📋 Overview
 
-This project implements a complete machine learning pipeline for plant disease classification, built using PyTorch and the MobileNetV3 architecture. The system can identify 15 different plant disease classes from the PlantVillage dataset with high accuracy.
+This project implements a complete machine learning pipeline for plant disease classification, built using PyTorch and the MobileNetV3 architecture. The system can identify 50 different plant disease classes from the PlantVillage dataset with high accuracy.
 
 ### 🔍 Key Features
 
@@ -21,8 +21,30 @@ This project implements a complete machine learning pipeline for plant disease c
 - **Interactive UI**: Web interface with GradCAM visualization of model attention
 - **Modular Design**: Clean, modular code structure for easy customization
 - **Comprehensive Evaluation**: Detailed metrics and visualizations
+- **Expanded Dataset**: Covers 50 classes spanning multiple crops including Apple, Blueberry, Cherry, Corn, Grape, Orange, Peach, Pepper, Potato, Raspberry, Soybean, Squash, Strawberry, and Tomato
 
 ![System Architecture](https://mermaid.ink/img/pako:eNp1kc9OwzAMxl8l8nkH2DjRJoSgQmOIE5rlkJq0haVN5ThDQ913x0k42DbmU2z_Pn-O5ZELrQkzUeiQu0wWxVOjGNkNWj0B-DcKhNIZFP0WIRVg-Gd2C0YMKJIAHk-hLpYRfNDBfaA0Z6RLVG3rydXI6YIIGRnTc7wRvtjVlOu7oVzPOyEYjCPIW6g0KcSF0-vl_5Lp3ZlDVOaS2nwkMY3aVcYBzs6Xk5Grc0IMNUR2B_USuuR1rZNjbvF8Wkw5ULpwzIg3CW9dPeM0Oa9OuVfWxXq43GFzlaPJoZFt-ZnzLtvXadVT-bWOzvVrC5e0Pu75z1ZCPt9-wEzEqWnPeUeVZppF6Uh35NZUu4iHPGgmO4hScXPYR-IbjLNK6Qgl04rxmDXGdpJDxuAVZfzAG2PY9htGEcog?type=png)
+
+### 🌱 Dataset Overview
+
+The dataset contains images of plant diseases across 14 different crops with a total of 50 classes. The classes include:
+
+1. **Apple**: Apple scab, Black rot, Cedar apple rust, Healthy
+2. **Blueberry**: Healthy
+3. **Cherry**: Powdery mildew, Healthy
+4. **Corn (maize)**: Cercospora leaf spot Gray leaf spot, Common rust, Northern Leaf Blight, Healthy
+5. **Grape**: Black rot, Esca (Black Measles), Leaf blight (Isariopsis Leaf Spot), Healthy
+6. **Orange**: Haunglongbing (Citrus greening)
+7. **Peach**: Bacterial spot, Healthy
+8. **Pepper**: Bacterial spot, Healthy
+9. **Potato**: Early blight, Late blight, Healthy
+10. **Raspberry**: Healthy
+11. **Soybean**: Healthy
+12. **Squash**: Powdery mildew
+13. **Strawberry**: Leaf scorch, Healthy
+14. **Tomato**: Bacterial spot, Early blight, Late blight, Leaf Mold, Septoria leaf spot, Spider mites Two-spotted spider mite, Target Spot, Tomato Yellow Leaf Curl Virus, Tomato mosaic virus, Healthy
+
+The dataset is balanced and contains high-quality RGB images of plant leaves.
 
 ## 🚀 Getting Started
 
@@ -204,9 +226,9 @@ The model training pipeline includes:
 
 The evaluation script produces:
 
-- **Confusion Matrix**: Visual representation of classification performance
-- **Excel Report**: Detailed per-class precision, recall, F1-score metrics
-- **Terminal Output**: Summary statistics and classification report
+- **Confusion Matrix**: Visual representation of classification performance across all 50 classes
+- **Excel Report**: Detailed per-class precision, recall, F1-score metrics for each plant disease category
+- **Terminal Output**: Summary statistics and classification report with performance indicators for all classes
 
 ## 🎛️ Customization
 
